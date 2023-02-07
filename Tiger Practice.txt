@@ -99,3 +99,39 @@ dfCapitalized.show(false)
 }
 
 }
+=================================================
+Tuples-sorting names based on height
+================================================
+val data = Array(("John",160),
+("David", 140),
+("Rajesh", 165),
+("Vishal",145),
+("Mani", 170),
+("Siva",168))
+
+data.foreach(println)
+
+println("=========Directly Sorting ARRAY of Tuples ====")
+println("=========i.e Not converting to a DataFrame or RDD ====")
+val data2 = data.sortBy(_._2)
+println("===Sorted Data===")
+
+data2.foreach(println)
+
+println("===Converting the I/P to DATAFRAME and Then Filtering ======")
+val df1 = sc.parallelize(data).toDF("Names","Height")
+
+df1.show()
+
+val df2 = df1.filter(col("Height")>160)
+println("===FILTERED Data Frame ======")
+df2.show()
+val rdd1 = df2.rdd
+
+println("===The Filtered DataFrame is then converted into RDD for displaying as tuple ======")
+val data1 = rdd1.map(X => (X(0),X(1)))
+
+data1.foreach(println)
+}
+}
+
