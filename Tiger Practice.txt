@@ -53,3 +53,49 @@ val rdd1 = dffil.rdd
 val newrdd= rdd1.map(x=> x(0),x(1)))
 
 newrdd.foreach(println)
+
+=================================================
+Sending a whole sentence to change the upper case
+================================================
+val columns = Seq("Seqno","Quote")
+val data = Seq(("1", "Be the change that you wish to see in the world"),
+("2", "Everyone thinks of changing the world, but no one thinks of changing himself."),
+("3", "The purpose of our lives is to be happy.")
+)
+
+
+val df = data.toDF(columns:_*)
+df.show(false)
+
+val convertCase =  (str:String) => {
+val arr = str.split(" ")
+arr.map(f=>  f.substring(0,1).toUpperCase + f.substring(1, f.length)).mkString(" ")
+}
+val convertUDF = udf(convertCase)
+
+df.select(col("Seqno"),
+convertUDF(col("Quote")).as("Quote") ).show(false)
+
+One line code:
+val convertUDF = udf((value: String) => value.split(' ').map(_.capitalize).mkString(" "))
+
+
+==================================================================================================
+Sending a whole sentence of various columns to change the upper case
+=================================================================================================
+val data = Seq(
+  (1, "Frankfurt am main", "just test", "Germany"),
+  (2, "should do this also", "test", "France"),
+)
+val df = spark.sparkContext.parallelize(data).toDF("ID", "City", "test", "Country")
+
+val convertUDF = udf((value: String) => value.split(' ').map(_.capitalize).mkString(" "))
+val dfCapitalized = df.columns.foldLeft(df) {
+  (df, column) => df.withColumn(column, convertUDF(col(column)))
+}
+dfCapitalized.show(false)
+
+
+}
+
+}
