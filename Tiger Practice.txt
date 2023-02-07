@@ -1,0 +1,55 @@
+import org.apache.spark.SparkConf
+org.apache.spark.SparkContext
+org.apache.spark.sql.SparkSession
+org.apache.spark.sql._
+org.apache.spark.sql.types._
+org.apche.spark.sql.types.IntegerType
+org.apache.spark.sql.functions._
+org.apache.spark.sql.functions.Upper
+org.apache.spark.sql.functions.udf
+org.apache.spark.sql.catalyst.expressions.Window
+org.apache.spark.sql.expressions.Window
+
+def main(args:Array[String]):Unit={
+
+val conf = new SparkConf().setAppName("SparkIntPrac").setMaster("local[*]")
+val sc = new SparkContext(conf)
+sc.setLogLevel("ERROR")
+
+val spark = SparkSession.builder.getOrCreate()
+import spark.implicits._
+======================
+Tuples upper case:
+======================
+val columns = Seq("name","age")
+
+val df1 = Seq(("ajay",32),("sam sri",35),("sarvan kumar",34),("arun kumar",30),("prem",35),("guru",37)).toDF(columns:_*)
+
+df1.show()
+
+val dfini = df1.withColumn("name",initcap(col("name"))
+
+val dfs=df1.withColumn("cap",concat(upper(substring(col("name"),1,1)),substring(col("name"),2,150)))
+
+dfs.show()
+
+val dfst=udf{(str:String)=> str.substring(0,1).toUpperCase().concat(str.substring(1)) }
+
+val dfinal=df1.withColumn("upper",dfst(col("names")) )
+dfinal.show()
+======================
+Height orderby:
+======================
+
+val data = Array( (),()     )
+val srt = data.sortBy(_._2)
+
+val df= sc.parallelize(data).toDF("names","height")
+
+val dffil=df.filter(col("names")>155))
+
+val rdd1 = dffil.rdd
+
+val newrdd= rdd1.map(x=> x(0),x(1)))
+
+newrdd.foreach(println)
